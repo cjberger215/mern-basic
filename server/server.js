@@ -1,10 +1,18 @@
-import config from '../config/config'
+import mongoose from 'mongoose';
+import config from '../config/config';
 import app from './express';
+
 // comment out before building for production
 import devBundle from './devBundle';
 
-// comment out before building for production
 devBundle.compile(app);
+
+mongoose.Promise = global.Promise;
+mongoose.connect(config.mongoUri);
+
+mongoose.connection.on('error', () => {
+  throw new Error(`unable to connect to database: ${config.mongoUri}`);
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, (err) => {
