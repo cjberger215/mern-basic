@@ -45,7 +45,7 @@ UserSchema.methods = {
   },
 };
 
-UserSchema.path('hashed_password').validate(function () {
+UserSchema.path('password_digest').validate(function () {
   if (this._password && this._password.length < 6) {
     this.invalidate('password', 'Password must be at least 6 characters.');
   }
