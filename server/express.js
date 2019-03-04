@@ -27,7 +27,8 @@ app.get('/', (req, res) => {
 app.use('/', userRoutes);
 app.use('/', authRoutes);
 
-app.use((err, req, res) => {
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
     res.status(401).json({ error: `${err.name}: ${err.message}` });
   }

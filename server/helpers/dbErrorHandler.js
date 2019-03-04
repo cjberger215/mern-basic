@@ -25,7 +25,7 @@ const getErrorMessage = (err) => {
     }
   } else {
     // eslint-disable-next-line no-restricted-syntax
-    for (const errName in err.errors) {
+    for (let errName in err.errors) {
       if (err.errors[errName].message) message = err.errors[errName].message;
     }
   }

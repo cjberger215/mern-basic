@@ -3,7 +3,7 @@ import expressJwt from 'express-jwt';
 import User from '../models/user.model';
 import config from '../../config/config';
 
-const signin = (req, res) => {
+const signin = (req, res, next) => {
   User.findOne(
     {
       email: req.body.email,
@@ -15,26 +15,30 @@ const signin = (req, res) => {
         });
       }
 
-      if (!user.authenticate(req.body.password)) {
-        return res.status('401').send({
-          error: "Email and password don't match.",
+      user.authenticate(req.body.password, (_err, isMatch) => {
+        if (_err) next(_err);
+
+        if (!isMatch) {
+          return res.status('401').send({
+            error: "Email and password don't match.",
+          });
+        }
+
+        const token = jwt.sign(
+          {
+            _id: user._id,
+          },
+          config.jwtSecret,
+        );
+
+        res.cookie('t', token, {
+          expire: new Date() + 9999,
         });
-      }
 
-      const token = jwt.sign(
-        {
-          _id: user._id,
-        },
-        config.jwtSecret,
-      );
-
-      res.cookie('t', token, {
-        expire: new Date() + 9999,
-      });
-
-      return res.json({
-        token,
-        user: { _id: user._id, name: user.name, email: user.email },
+        return res.json({
+          token,
+          user: { _id: user._id, name: user.name, email: user.email },
+        });
       });
     },
   );
