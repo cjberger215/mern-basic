@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
+const SALT_WORK_FACTOR = 10;
+
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -19,39 +21,34 @@ const UserSchema = new mongoose.Schema({
     default: Date.now,
   },
   updated: Date,
-  password_digest: {
+  password: {
     type: String,
+    minlength: 6,
     required: 'Password is required',
   },
   salt: String,
 });
 
-UserSchema.virtual('password')
-  .set(function (password) {
-    this._password = password;
-    this.password_digest = this.encryptPassword(password);
-  })
-  .get(function () {
-    return this._password;
+UserSchema.pre('save', function (next) {
+  const user = this;
+
+  if (!user.isModified('password')) return next();
+
+  bcrypt.hash(user.password, SALT_WORK_FACTOR, (err, hash) => {
+    if (err) return next(err);
+
+    user.password = hash;
+    next();
   });
+});
 
 UserSchema.methods = {
-  authenticate(plaintext) {
-    return bcrypt.compare(plaintext, this.password_digest, (err, res) => res);
-  },
-  encryptPassword(password) {
-    if (!password) return '';
-    return bcrypt.hash(password, 10, (err, hash) => hash);
+  authenticate(plaintext, cb) {
+    return bcrypt.compare(plaintext, this.password, (err, isMatch) => {
+      if (err) return cb(err);
+      cb(null, isMatch);
+    });
   },
 };
-
-UserSchema.path('password_digest').validate(function () {
-  if (this._password && this._password.length < 6) {
-    this.invalidate('password', 'Password must be at least 6 characters.');
-  }
-  if (this.isNew && !this._password) {
-    this.invalidate('password', 'Password is required');
-  }
-}, null);
 
 export default mongoose.model('User', UserSchema);

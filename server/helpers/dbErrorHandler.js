@@ -24,9 +24,10 @@ const getErrorMessage = (err) => {
         message = 'Server side error';
     }
   } else {
-    err.errors.forEach((error) => {
-      console.log(error);
-    });
+    // eslint-disable-next-line no-restricted-syntax
+    for (const errName in err.errors) {
+      if (err.errors[errName].message) message = err.errors[errName].message;
+    }
   }
   return message;
 };

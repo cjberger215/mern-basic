@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import User from '../models/user.model';
-import errorHandler from '../helpers/dbErrorHandler';
+import getErrorMessage from '../helpers/dbErrorHandler';
 
 /* eslint array-callback-return: "off" */
 
@@ -9,7 +9,7 @@ const create = (req, res) => {
   user.save((err) => {
     if (err) {
       return res.status(400).json({
-        error: errorHandler.getErrorMessage(err),
+        error: getErrorMessage(err),
       });
     }
     res.status(200).json({
@@ -22,7 +22,7 @@ const list = (req, res) => {
   User.find((err, users) => {
     if (err) {
       return res.status(400).json({
-        error: errorHandler.getErrorMessage(err),
+        error: getErrorMessage(err),
       });
     }
     res.json(users);
@@ -53,7 +53,7 @@ const update = (req, res) => {
   user.save((err) => {
     if (err) {
       return res.status(400).json({
-        error: errorHandler.getErrorMessage(err),
+        error: getErrorMessage(err),
       });
     }
     user.password_digest = undefined;
@@ -66,7 +66,7 @@ const remove = (req, res) => {
   user.remove((err, deletedUser) => {
     if (err) {
       return res.status(400).json({
-        error: errorHandler.getErrorMessage(err),
+        error: getErrorMessage(err),
       });
     }
     deletedUser.password_digest = undefined; //eslint-disable-line
