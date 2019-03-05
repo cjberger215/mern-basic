@@ -5,6 +5,7 @@ import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import { Link } from 'react-router-dom';
 import rocketImg from '../assets/img/rocket.jpg';
 
 const styles = theme => ({
@@ -37,6 +38,7 @@ class Home extends Component {
             <Typography variant="body1" component="p">
               Welcome to the Mern Skeleton home page
             </Typography>
+            <Link to="/users">Users</Link>
           </CardContent>
         </Card>
       </div>
