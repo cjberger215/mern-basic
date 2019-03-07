@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import Users from './user/Users';
 import Home from './core/Home';
 import Signup from './user/Signup';
+import SignIn from './auth/SignIn';
 
 // eslint-disable-next-line react/prefer-stateless-function
 class MainRouter extends Component {
@@ -13,6 +14,7 @@ class MainRouter extends Component {
           <Route exact path="/" component={Home} />
           <Route path="/users" component={Users} />
           <Route path="/signup" component={Signup} />
+          <Route path="/signin" component={SignIn} />
         </Switch>
       </div>
     );
